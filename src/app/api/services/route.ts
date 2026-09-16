@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { adminDb } from "@/lib/firebase-admin";
 
-export async function GET(){
+export async function GET() {
   try {
-    const services=await prisma.service.findMany({where:{active:true},orderBy:{name:"asc"}});
+    const snapshot = await adminDb().collection("services").where("active", "==", true).get();
+    const services = snapshot.docs
+      .map((doc) => ({ id: doc.id, ...doc.data() }))
+      .sort((a: any, b: any) => String(a.name).localeCompare(String(b.name), "pt-BR"));
     return NextResponse.json(services);
   } catch {
-    return NextResponse.json({error:"Banco de dados ainda não configurado."},{status:503});
+    return NextResponse.json({ error: "Firebase ainda não configurado." }, { status: 503 });
   }
 }
