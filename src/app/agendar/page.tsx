@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { ArrowLeft, CalendarDays, Check, CheckCircle2, Clock3, Loader2, RefreshCw, Sparkles, UserRound } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 
 type Service = { id: string; name: string; durationMin: number; priceCents: number; active: boolean };
 type Confirmation = { id: string; status: string; service: string; startsAt: string; priceCents: number };
 
 function money(value: number) {
+  if (value <= 0) return "Valor a definir";
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value / 100);
 }
 
@@ -123,10 +125,10 @@ export default function AgendarPage() {
 
   if (confirmation) {
     const confirmedDate = new Date(confirmation.startsAt);
-    return <main className="shell booking-shell"><section className="success-card" aria-live="polite"><div className="success-icon"><CheckCircle2 size={44}/></div><div className="eyebrow">Tudo certo</div><h1>Agendamento confirmado!</h1><p className="section-copy">Seu horário foi reservado. Guarde este resumo para consultar quando precisar.</p><div className="receipt"><div><span>Serviço</span><strong>{confirmation.service}</strong></div><div><span>Data</span><strong>{new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeZone: "America/Sao_Paulo" }).format(confirmedDate)}</strong></div><div><span>Horário</span><strong>{new Intl.DateTimeFormat("pt-BR", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "America/Sao_Paulo" }).format(confirmedDate)}</strong></div><div><span>Valor</span><strong>{money(confirmation.priceCents)}</strong></div></div><p className="confirmation-note">A Clicia receberá os dados do seu agendamento.</p><Link className="btn btn-primary" href="/">Voltar ao início</Link></section></main>;
+    return <main className="shell booking-shell"><section className="success-card" aria-live="polite"><BrandLogo variant="booking"/><div className="success-icon"><CheckCircle2 size={44}/></div><div className="eyebrow">Tudo certo</div><h1>Agendamento confirmado!</h1><p className="section-copy">Seu horário foi reservado. Guarde este resumo para consultar quando precisar.</p><div className="receipt"><div><span>Serviço</span><strong>{confirmation.service}</strong></div><div><span>Data</span><strong>{new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeZone: "America/Sao_Paulo" }).format(confirmedDate)}</strong></div><div><span>Horário</span><strong>{new Intl.DateTimeFormat("pt-BR", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "America/Sao_Paulo" }).format(confirmedDate)}</strong></div><div><span>Valor</span><strong>{money(confirmation.priceCents)}</strong></div></div><p className="confirmation-note">A Clicia receberá os dados do seu agendamento.</p><Link className="btn btn-primary" href="/">Voltar ao início</Link></section></main>;
   }
 
-  return <main className="shell booking-shell"><section className="booking-card"><Link className="back-link" href="/"><ArrowLeft size={17}/> Voltar ao início</Link><header className="booking-heading"><div className="eyebrow">Agenda online</div><h1>Reserve seu horário</h1><p>Faça uma escolha por vez. Você poderá revisar tudo antes de confirmar.</p></header>
+  return <main className="shell booking-shell"><section className="booking-card"><BrandLogo variant="booking"/><Link className="back-link" href="/"><ArrowLeft size={17}/> Voltar ao início</Link><header className="booking-heading"><div className="eyebrow">Agenda online</div><h1>Reserve seu horário</h1><p>Faça uma escolha por vez. Você poderá revisar tudo antes de confirmar.</p></header>
     <ol className="booking-progress" aria-label={`Etapa ${currentStep} de 4`}>{[{n:1,label:"Serviço",icon:Sparkles},{n:2,label:"Data",icon:CalendarDays},{n:3,label:"Horário",icon:Clock3},{n:4,label:"Dados",icon:UserRound}].map(({n,label,icon:Icon}) => <li key={n} className={currentStep === n ? "active" : currentStep > n ? "complete" : ""}><span>{currentStep > n ? <Check size={16}/> : <Icon size={16}/>}</span><small>{label}</small></li>)}</ol>
     <form onSubmit={submit} noValidate>
       <fieldset className="booking-section"><legend><span>1</span> Escolha o serviço</legend>{loading ? <div className="loading-row"><Loader2 className="spin"/> Carregando serviços...</div> : <div className="service-options">{services.map(service => <button type="button" key={service.id} className={`service-option ${serviceId === service.id ? "selected" : ""}`} onClick={() => chooseService(service.id)} aria-pressed={serviceId === service.id}><span><strong>{service.name}</strong><small>{service.durationMin} min</small></span><b>{money(service.priceCents)}</b>{serviceId === service.id ? <CheckCircle2 size={20}/> : null}</button>)}</div>}{!loading && services.length === 0 ? <div className="empty-state compact"><p>Nenhum serviço disponível no momento.</p></div> : null}</fieldset>
