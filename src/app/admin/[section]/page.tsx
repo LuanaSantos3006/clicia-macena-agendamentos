@@ -1,0 +1,5 @@
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+
+const titles:Record<string,string>={agenda:"Agenda",agendamentos:"Agendamentos",clientes:"Clientes",servicos:"Serviços",horarios:"Horários",configuracoes:"Configurações"};
+export default async function Section({params}:{params:Promise<{section:string}>}){const {section}=await params;const title=titles[section]??"Administração";return <main className="shell section"><Link href="/admin" style={{display:'inline-flex',gap:8,alignItems:'center',color:'var(--muted)'}}><ArrowLeft size={16}/> Dashboard</Link><div className="eyebrow" style={{marginTop:30}}>Área administrativa</div><h1 style={{fontSize:52}}>{title}</h1><div className="card"><h3>{title}</h3><p>Esta área já está reservada na arquitetura. Os controles persistentes serão conectados ao banco de dados no próximo estágio.</p></div></main>}
