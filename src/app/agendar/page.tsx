@@ -1,0 +1,11 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { ArrowLeft, CalendarDays, CheckCircle2 } from "lucide-react";
+
+export default function AgendarPage(){
+ const [sent,setSent]=useState(false);
+ if(sent) return <main className="shell"><div className="form-card" style={{textAlign:"center"}}><CheckCircle2 size={48} style={{margin:"0 auto 18px"}}/><div className="eyebrow">Tudo certo</div><h1 style={{fontSize:42}}>Agendamento solicitado</h1><p className="section-copy" style={{margin:"0 auto 24px"}}>Seu pedido foi registrado nesta versão inicial. A confirmação definitiva será ativada junto com o banco de dados e a agenda da Clicia.</p><Link className="btn btn-primary" href="/">Voltar ao início</Link></div></main>;
+ return <main className="shell"><div className="form-card"><Link href="/" style={{display:"inline-flex",gap:8,alignItems:"center",color:"var(--muted)"}}><ArrowLeft size={16}/> Voltar</Link><div className="eyebrow" style={{marginTop:28}}>Agendamento</div><h1 style={{fontSize:46}}>Reserve seu horário</h1><form onSubmit={(e)=>{e.preventDefault();setSent(true)}}><div className="field"><label>Serviço</label><select required defaultValue=""><option value="" disabled>Selecione um serviço</option><option>Manicure</option><option>Pedicure</option><option>Atendimento especial</option></select></div><div className="field"><label>Data</label><input required type="date" /></div><div className="field"><label>Horário</label><select required defaultValue=""><option value="" disabled>Selecione o horário</option><option>09:00</option><option>10:00</option><option>11:00</option><option>14:00</option><option>15:00</option></select></div><div className="field"><label>Nome</label><input required placeholder="Seu nome" /></div><div className="field"><label>WhatsApp</label><input required inputMode="tel" placeholder="(11) 99999-9999" /></div><div className="field"><label>Observação (opcional)</label><textarea rows={3} placeholder="Alguma informação importante?" /></div><button className="btn btn-primary" style={{width:"100%"}} type="submit"><CalendarDays size={17}/> Confirmar agendamento</button></form></div></main>
+}
