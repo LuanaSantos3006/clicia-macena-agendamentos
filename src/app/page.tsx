@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CalendarDays, Clock3, Heart, Sparkles } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
+import SocialLinks from "@/components/SocialLinks";
 
 type Service = {
   id: string;
@@ -38,7 +39,7 @@ export default function Home() {
   }, []);
 
   return <>
-    <header className="header"><div className="shell header-inner"><BrandLogo variant="header"/><nav className="nav" aria-label="Navegação principal"><a href="#servicos">Serviços</a><a href="#como-funciona">Como funciona</a><Link href="/admin/login">Área administrativa</Link></nav><Link className="btn btn-primary header-cta" href="/agendar"><CalendarDays size={17}/> Agendar</Link></div></header>
+    <header className="header"><div className="shell header-inner"><BrandLogo variant="header"/><nav className="nav" aria-label="Navegação principal"><a href="#servicos">Serviços</a><a href="#como-funciona">Como funciona</a><Link href="/admin/login">Área administrativa</Link></nav><div className="header-actions"><SocialLinks/><Link className="btn btn-primary header-cta" href="/agendar"><CalendarDays size={17}/><span>Agendar</span></Link></div></div></header>
     <main>
       <section className="shell hero"><div><div className="eyebrow">Seu momento de cuidado</div><h1>Beleza nos detalhes, cuidado em cada momento.</h1><p className="lead">Escolha seu serviço, encontre o melhor horário e faça seu agendamento online de forma simples.</p><div className="flow" aria-label="Etapas do agendamento"><span className="step">1. Serviço</span><span className="step">2. Data</span><span className="step">3. Horário</span><span className="step">4. Seus dados</span></div><Link className="btn btn-primary" href="/agendar"><Sparkles size={17}/> Quero agendar</Link></div><div className="hero-card"><Heart size={34}/><strong>Um espaço feito para você.</strong><p className="section-copy">Organize seu horário sem mensagens de ida e volta e veja as opções realmente disponíveis.</p></div></section>
       <section id="servicos" className="section"><div className="shell"><div className="eyebrow">Serviços</div><h2 className="section-title">Escolha seu cuidado</h2><p className="section-copy">Valores e duração atualizados diretamente pela agenda da Clicia.</p>
