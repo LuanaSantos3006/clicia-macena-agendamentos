@@ -1,0 +1,3 @@
+import {NextRequest,NextResponse} from "next/server";import {jwtVerify} from "jose";
+export async function middleware(req:NextRequest){if(req.nextUrl.pathname==="/admin/login")return NextResponse.next();const token=req.cookies.get("clicia_admin_session")?.value;if(!token)return NextResponse.redirect(new URL("/admin/login",req.url));try{const secret=new TextEncoder().encode(process.env.AUTH_SECRET||"development-only-change-me"),{payload}=await jwtVerify(token,secret);if(payload.role!=="admin")throw new Error();return NextResponse.next()}catch{return NextResponse.redirect(new URL("/admin/login",req.url))}}
+export const config={matcher:["/admin/:path*"]};
