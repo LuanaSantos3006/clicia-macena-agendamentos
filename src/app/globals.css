@@ -88,6 +88,8 @@ h1 { font-family:Georgia,serif; font-size:clamp(44px,7vw,78px); line-height:.98;
 .service-editor { display:grid; gap:14px; }
 .service-editor-actions { display:flex; gap:10px; flex-wrap:wrap; }
 .service-status { display:inline-flex; width:max-content; padding:6px 10px; border-radius:999px; background:var(--rose-soft); color:var(--rose-dark); font-size:12px; font-weight:800; }
+.price { margin-top:12px; color:var(--rose-dark); font-weight:900; font-size:17px; }
+.price-edit-field { padding:16px; border:1px solid rgba(184,138,56,.28); border-radius:16px; background:#fffaf0; }
 
 .booking-shell { padding:34px 0 70px; }
 .booking-card,.success-card { max-width:760px; margin:0 auto; background:white; border:1px solid var(--border); border-radius:30px; padding:34px; box-shadow:0 20px 60px rgba(73,48,47,.08); }
