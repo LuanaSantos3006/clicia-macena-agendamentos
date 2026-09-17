@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { CalendarDays, Clock3, ExternalLink, Menu, Settings, Sparkles, Users, X, ClipboardList } from "lucide-react";
+import { BarChart3, CalendarDays, Clock3, ExternalLink, Menu, Settings, Sparkles, Users, X, ClipboardList } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import LogoutButton from "@/components/LogoutButton";
 
@@ -13,6 +13,7 @@ const menu = [
   { name: "Clientes", url: "/admin/clientes", icon: Users },
   { name: "Serviços", url: "/admin/servicos", icon: Sparkles },
   { name: "Horários", url: "/admin/horarios", icon: Clock3 },
+  { name: "Relatórios", url: "/admin/relatorios", icon: BarChart3 },
   { name: "Configurações", url: "/admin/configuracoes", icon: Settings },
 ];
 
