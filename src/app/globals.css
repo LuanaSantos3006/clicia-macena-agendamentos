@@ -47,8 +47,13 @@ h1 { font-family:Georgia,serif; font-size:clamp(44px,7vw,78px); line-height:.98;
 .service-card .btn { width:100%; }
 .service-meta { display:flex; justify-content:space-between; gap:12px; align-items:center; color:var(--muted); font-size:14px; }
 .service-meta strong { color:var(--rose-dark); font-size:18px; }
-.flow { display:flex; gap:12px; flex-wrap:wrap; margin:28px 0; }
-.step { padding:10px 15px; border-radius:999px; background:white; border:1px solid var(--border); font-size:13px; }
+.flow { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; max-width:620px; margin:30px 0; }
+.step { position:relative; min-height:78px; display:flex; align-items:center; gap:12px; padding:13px 15px; border-radius:18px; background:white; border:1px solid var(--border); font-size:13px; overflow:hidden; }
+.step::after { content:""; position:absolute; width:60px; height:60px; right:-30px; bottom:-36px; border:1px solid rgba(184,138,56,.13); border-radius:50%; }
+.step>span { width:38px; height:38px; flex:0 0 38px; display:grid; place-items:center; border-radius:50%; color:white; background:linear-gradient(135deg,#d5a84f,#865a18); box-shadow:0 7px 18px rgba(132,88,22,.2); font-family:Georgia,serif; font-size:18px; }
+.step>div { min-width:0; display:grid; gap:3px; }
+.step strong { color:var(--foreground); font-size:14px; }
+.step small { color:var(--muted); font-size:11px; line-height:1.3; }
 .skeleton-card span { display:block; height:14px; margin:12px 0; border-radius:8px; background:linear-gradient(90deg,#f2eadb 25%,#fffdf8 50%,#f2eadb 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; }
 .skeleton-card span:first-child { width:36px; height:36px; }
 .skeleton-card span:last-child { width:60%; }
@@ -215,7 +220,7 @@ h1 { letter-spacing:-.035em; text-wrap:balance; }
 .service-card { min-height:260px; }
 .service-card::before { content:""; position:absolute; top:0; left:24px; right:24px; height:2px; background:linear-gradient(90deg,transparent,#d1a34b,transparent); opacity:.7; }
 .service-meta { padding-top:16px; border-top:1px solid rgba(168,127,55,.13); }
-.step { background:rgba(255,255,255,.74); border-color:rgba(173,132,61,.2); box-shadow:0 6px 20px rgba(75,54,20,.045); }
+.step { background:rgba(255,255,255,.82); border-color:rgba(173,132,61,.2); box-shadow:0 9px 24px rgba(75,54,20,.06); }
 .footer { background:rgba(255,253,248,.78); }
 .booking-card,.success-card,.form-card {
   background:rgba(255,255,255,.94);
@@ -333,8 +338,8 @@ h1 { letter-spacing:-.035em; text-wrap:balance; }
   .section-title{font-size:clamp(32px,9vw,40px);line-height:1.08}
   .grid,.stats{grid-template-columns:1fr;gap:14px;margin-top:26px}
   .card{padding:22px;border-radius:20px}
-  .flow{gap:8px;margin:24px 0}
-  .step{font-size:12px;padding:9px 12px}
+  .flow{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:26px 0}
+  .step{min-height:74px;padding:11px 12px}
   .admin-layout{display:block;min-height:100vh}
   .sidebar{position:sticky;top:0;z-index:40;height:auto;overflow:visible;border-right:0;border-bottom:1px solid rgba(213,168,79,.26);padding:10px 14px;box-shadow:0 12px 30px rgba(25,18,8,.16)}
   .sidebar-head{justify-content:space-between;gap:14px}
@@ -394,6 +399,9 @@ h1 { letter-spacing:-.035em; text-wrap:balance; }
   .hero{padding:38px 0 48px}
   .hero h1{font-size:clamp(36px,11vw,48px)}
   .lead{font-size:16px}
+  .step>span{width:34px;height:34px;flex-basis:34px;font-size:16px}
+  .step strong{font-size:13px}
+  .step small{font-size:10px}
   .hero-card{min-height:245px;padding:24px}
   .hero-card strong{font-size:27px}
   .section{padding:46px 0}
@@ -435,4 +443,5 @@ h1 { letter-spacing:-.035em; text-wrap:balance; }
   .booking-progress small{font-size:9px}
   .booking-section legend{font-size:20px}
   .sidebar nav{grid-template-columns:1fr}
+  .flow{grid-template-columns:1fr}
 }
