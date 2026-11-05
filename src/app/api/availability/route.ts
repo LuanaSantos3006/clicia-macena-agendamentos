@@ -14,11 +14,11 @@ export async function GET(request: Request) {
   if (!Number.isFinite(requestedDay.getTime()) || requestedDay < new Date(`${today.toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" })}T00:00:00-03:00`) || requestedDay > limit) return NextResponse.json({ error: "Escolha uma data dentro dos próximos 180 dias." }, { status: 400 });
   try {
     const db = adminDb();
-    const [serviceSnap, hoursSnap] = await Promise.all([db.collection("services").doc(serviceId).get(), db.collection("settings").doc("workingHours").get()]);
+    const [serviceSnap, hoursSnap, specialSnap] = await Promise.all([db.collection("services").doc(serviceId).get(), db.collection("settings").doc("workingHours").get(), db.collection("settings").doc("specialHours").get()]);
     if (!serviceSnap.exists || serviceSnap.data()?.active !== true) return NextResponse.json([]);
     const duration = Number(serviceSnap.data()?.durationMin || 60), dayIndex = requestedDay.getDay(), days = hoursSnap.data()?.days;
     const baseConfig = Array.isArray(days) ? days.find((day: { day?: number }) => day.day === dayIndex) : undefined;
-    const config=yearEndSchedule(date,baseConfig);
+    const config=yearEndSchedule(date,baseConfig,specialSnap.data()?.days?.[date]);
     if (!config?.enabled || !config.start || !config.end) return NextResponse.json([]);
     const start = mins(config.start), end = mins(config.end), breakStart = config.breakStart ? mins(config.breakStart) : null, breakEnd = config.breakEnd ? mins(config.breakEnd) : null;
     const dayStart = new Date(`${date}T00:00:00-03:00`), dayEnd = new Date(`${date}T23:59:59-03:00`);

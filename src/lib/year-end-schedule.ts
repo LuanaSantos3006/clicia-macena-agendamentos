@@ -1,6 +1,7 @@
 type DayConfig={day?:number;enabled?:boolean;start?:string;end?:string;breakStart?:string|null;breakEnd?:string|null};
 
-export function yearEndSchedule(date:string,config:DayConfig|undefined):DayConfig|undefined{
+export function yearEndSchedule(date:string,config:DayConfig|undefined,special?:DayConfig):DayConfig|undefined{
+  if(special)return special.enabled?{...special,breakStart:null,breakEnd:null}:special;
   if(!config?.enabled)return config;
   if(!date.startsWith("2026-12-"))return config;
   const shortDay=date.slice(8,10);

@@ -18,9 +18,9 @@ export async function POST(request: Request) {
       const service = serviceSnap.data()!, startsAt = new Date(parsed.data.startsAt);
       if (!Number.isFinite(startsAt.getTime()) || startsAt.getTime() <= Date.now() || startsAt.getTime() > Date.now() + 180 * 24 * 60 * 60 * 1000) throw new Error("TIME");
       const duration = Number(service.durationMin || 60), endsAt = new Date(startsAt.getTime() + duration * 60000), brDate = new Date(startsAt.getTime() - 3 * 3600000), date = brDate.toISOString().slice(0, 10), hour = brDate.toISOString().slice(11, 16), dayIndex = new Date(`${date}T12:00:00-03:00`).getDay();
-      const hoursRef = db.collection("settings").doc("workingHours"), hoursSnap = await transaction.get(hoursRef), days = hoursSnap.data()?.days;
+      const hoursRef = db.collection("settings").doc("workingHours"), specialRef=db.collection("settings").doc("specialHours"), hoursSnap = await transaction.get(hoursRef), specialSnap=await transaction.get(specialRef), days = hoursSnap.data()?.days;
       const baseConfig = Array.isArray(days) ? days.find((day: { day?: number }) => day.day === dayIndex) : undefined;
-      const config=yearEndSchedule(date,baseConfig);
+      const config=yearEndSchedule(date,baseConfig,specialSnap.data()?.days?.[date]);
       if (!config?.enabled || !config.start || !config.end) throw new Error("TIME");
       const startMinutes = mins(hour), endMinutes = startMinutes + duration;
       if (startMinutes < mins(config.start) || endMinutes > mins(config.end)) throw new Error("TIME");
