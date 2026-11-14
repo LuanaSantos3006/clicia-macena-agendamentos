@@ -14,7 +14,11 @@ export async function GET(request:Request){
   if(!await getAdminSession())return NextResponse.json({error:"Não autorizado."},{status:401});
   const month=new URL(request.url).searchParams.get("month")||"";
   if(!monthPattern.test(month))return NextResponse.json({error:"Mês inválido."},{status:400});
-  const snapshot=await adminDb().collection("financialEntries").where("month","==",month).get();
+  const db=adminDb();
+  const appointments=await db.collection("appointments").where("status","==","COMPLETED").limit(500).get();
+  const completed=appointments.docs.filter(doc=>{const value=doc.data(),date=value.startsAt?.toDate?.().toLocaleDateString("en-CA",{timeZone:"America/Sao_Paulo"})||"";return date.slice(0,7)===month&&!value.isPackage&&Number(value.priceCents||0)>0&&["CASH","PIX","CARD"].includes(value.paymentMethod)});
+  if(completed.length){const batch=db.batch();for(const doc of completed){const value=doc.data(),date=value.startsAt.toDate().toLocaleDateString("en-CA",{timeZone:"America/Sao_Paulo"}),ref=db.collection("financialEntries").doc(`appointment_${doc.id}`);batch.set(ref,{type:"INCOME",date,month,category:"Atendimentos",description:`${value.serviceName||"Serviço"} — ${value.clientName||"Cliente"}`,amountCents:Number(value.priceCents),paymentMethod:value.paymentMethod,source:"APPOINTMENT",appointmentId:doc.id,updatedAt:FieldValue.serverTimestamp()},{merge:true})}await batch.commit()}
+  const snapshot=await db.collection("financialEntries").where("month","==",month).get();
   const entries=snapshot.docs.map(doc=>({id:doc.id,...doc.data()})).sort((a:Record<string,unknown>,b:Record<string,unknown>)=>String(b.date).localeCompare(String(a.date))||String(b.createdAt||"").localeCompare(String(a.createdAt||"")));
   return NextResponse.json(entries,{headers:{"Cache-Control":"no-store"}});
 }
