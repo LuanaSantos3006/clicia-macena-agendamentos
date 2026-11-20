@@ -49,7 +49,7 @@ export async function POST() {
         let importedClientName = title;
         if (matchedService) {
           const index = normalizedTitle.indexOf(matchedService.name.toLocaleLowerCase("pt-BR"));
-          importedClientName = (title.slice(0, index) + " " + title.slice(index + matchedService.name.length)).replace(/[|–—,:;()\\-\\s]+/g, " ").trim();
+          importedClientName = (title.slice(0, index) + " " + title.slice(index + matchedService.name.length)).replace(/[|–—,:;()\s-]+/g, " ").trim();
         }
         batch.set(ref, {
           clientName: old.clientName || importedClientName || title,
