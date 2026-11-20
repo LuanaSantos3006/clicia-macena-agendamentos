@@ -11,5 +11,6 @@ export async function GET() {
     connected: Boolean(connection?.encryptedRefreshToken),
     accountEmail: connection?.accountEmail || null,
     connectedAt: connection?.connectedAt?.toDate?.().toISOString?.() || null,
+    lastSyncedAt: connection?.lastSyncedAt?.toDate?.().toISOString?.() || null,
   });
 }
