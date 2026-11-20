@@ -18,6 +18,8 @@ export async function POST() {
     const timeMax = new Date(Date.now() + 365 * 86400000).toISOString();
     let pageToken = "", imported = 0, skipped = 0;
     const db = adminDb();
+    const serviceDocs = await db.collection("services").where("active", "==", true).get();
+    const services = serviceDocs.docs.map(doc => ({ name: String(doc.data().name || ""), priceCents: Number(doc.data().priceCents || 0) })).filter(service => service.name);
     do {
       const params = new URLSearchParams({ timeMin, timeMax, singleEvents: "true", showDeleted: "true", maxResults: "250", orderBy: "startTime" });
       if (pageToken) params.set("pageToken", pageToken);
@@ -27,22 +29,36 @@ export async function POST() {
       const batch = db.batch();
       for (const event of payload.items || []) {
         if (!event.id) { skipped++; continue; }
-        const starts = event.start?.dateTime, ends = event.end?.dateTime;
-        if (!starts || !ends) { skipped++; continue; }
-        const startsAt = new Date(starts), endsAt = new Date(ends);
-        if (!Number.isFinite(startsAt.getTime()) || !Number.isFinite(endsAt.getTime()) || endsAt <= startsAt) { skipped++; continue; }
-        const ref = db.collection("appointments").doc(`gcal_${Buffer.from(event.id).toString("base64url")}`);
+        const ref = db.collection("appointments").doc("gcal_" + Buffer.from(event.id).toString("base64url"));
         const previous = await ref.get();
         const old = previous.data() || {};
+        const starts = event.start?.dateTime, ends = event.end?.dateTime;
+        if (!starts || !ends) {
+          if (event.status === "cancelled" && previous.exists) {
+            batch.update(ref, { status: "CANCELLED", updatedAt: FieldValue.serverTimestamp() });
+            imported++;
+          } else skipped++;
+          continue;
+        }
+        const startsAt = new Date(starts), endsAt = new Date(ends);
+        if (!Number.isFinite(startsAt.getTime()) || !Number.isFinite(endsAt.getTime()) || endsAt <= startsAt) { skipped++; continue; }
         const title = (event.summary || "").trim() || "Agendamento Google Calendar";
+        const normalizedTitle = title.toLocaleLowerCase("pt-BR");
+        const matchedService = services.find(service => normalizedTitle.includes(service.name.toLocaleLowerCase("pt-BR")));
+        const serviceName = old.serviceName || matchedService?.name || title;
+        let importedClientName = title;
+        if (matchedService) {
+          const index = normalizedTitle.indexOf(matchedService.name.toLocaleLowerCase("pt-BR"));
+          importedClientName = (title.slice(0, index) + " " + title.slice(index + matchedService.name.length)).replace(/[|–—,:;()\\-\\s]+/g, " ").trim();
+        }
         batch.set(ref, {
-          clientName: old.clientName || title,
+          clientName: old.clientName || importedClientName || title,
           phone: old.phone || "",
-          serviceName: old.serviceName || title,
+          serviceName,
           startsAt: Timestamp.fromDate(startsAt),
           endsAt: Timestamp.fromDate(endsAt),
-          priceCents: Number(old.priceCents || 0),
-          status: event.status === "cancelled" ? "CANCELLED" : (old.status === "CANCELLED" ? "PENDING" : old.status || "PENDING"),
+          priceCents: Number(old.priceCents || matchedService?.priceCents || 0),
+          status: event.status === "cancelled" ? "CANCELLED" : (old.status || "PENDING"),
           notes: old.notes || (event.description || "").slice(0, 500) || null,
           paymentMethod: old.paymentMethod || null,
           paymentReceived: Boolean(old.paymentReceived),
