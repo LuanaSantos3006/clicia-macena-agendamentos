@@ -10,12 +10,13 @@ import ContactSettings from "@/components/ContactSettings";
 import ReportsManager from "@/components/ReportsManager";
 import FinanceManager from "@/components/FinanceManager";
 import MonthlyPackagesManager from "@/components/MonthlyPackagesManager";
+import GoogleCalendarSettings from "@/components/GoogleCalendarSettings";
 
 const titles: Record<string, string> = { agenda: "Agenda", agendamentos: "Agendamentos", clientes: "Clientes", servicos: "Serviços", horarios: "Horários", financeiro: "Controle financeiro", pacotes: "Pacotes mensais", relatorios: "Relatórios", configuracoes: "Configurações" };
 
 export default async function Section({ params }: { params: Promise<{ section: string }> }) {
   const { section } = await params;
   const title = titles[section] ?? "Administração";
-  const content=section==="servicos"?<ServicesManager/>:section==="horarios"?<HoursManager/>:section==="agenda"?<AppointmentsManager agenda/>:section==="agendamentos"?<AppointmentsManager/>:section==="clientes"?<ClientsManager/>:section==="financeiro"?<FinanceManager/>:section==="pacotes"?<MonthlyPackagesManager/>:section==="relatorios"?<ReportsManager/>:section==="configuracoes"?<div className="settings-stack"><ContactSettings/><AccountManager/></div>:<div className="card"><p>Área não encontrada.</p></div>;
+  const content=section==="servicos"?<ServicesManager/>:section==="horarios"?<HoursManager/>:section==="agenda"?<AppointmentsManager agenda/>:section==="agendamentos"?<AppointmentsManager/>:section==="clientes"?<ClientsManager/>:section==="financeiro"?<FinanceManager/>:section==="pacotes"?<MonthlyPackagesManager/>:section==="relatorios"?<ReportsManager/>:section==="configuracoes"?<div className="settings-stack"><GoogleCalendarSettings/><ContactSettings/><AccountManager/></div>:<div className="card"><p>Área não encontrada.</p></div>;
   return <div className="admin-layout"><AdminSidebar/><main className="admin-main admin-section"><div className="section-brand-row"><Link href="/admin" className="back-link"><ArrowLeft size={16}/> Dashboard</Link></div><div className="eyebrow">Área administrativa</div><h1 style={{ fontSize: 52 }}>{title}</h1>{content}</main></div>;
 }
