@@ -1,1 +1,1 @@
-{"crons":[{"path":"/api/cron/monthly-report","schedule":"5 3 1 * *"}]}
+{"crons":[{"path":"/api/cron/monthly-report","schedule":"5 3 1 * *"},{"path":"/api/admin/google-calendar/sync","schedule":"*/15 * * * *"}]}
