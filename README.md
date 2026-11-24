@@ -39,13 +39,13 @@ Configure as mesmas variáveis no projeto Vercel. O banco precisa estar acessív
 
 ## Integração com Google Calendar
 
-A conexão usa OAuth somente para leitura. Depois de configurar as credenciais, entre na área administrativa, abra **Configurações** e clique em **Conectar Google Calendar**. Autorize a conta que contém a agenda. Eventos com horário serão importados como agendamentos pendentes; quando o nome do serviço do app aparecer no título do evento, o app também associa o valor cadastrado para permitir o lançamento financeiro após a confirmação do pagamento. A sincronização roda ao abrir a seção **Agenda** e também pode ser iniciada em Configurações.
+A conexão usa OAuth somente para leitura. Depois de configurar as credenciais, entre na área administrativa, abra **Configurações** e clique em **Conectar Google Calendar**. Autorize a conta que contém a agenda. Eventos com horário serão importados como agendamentos pendentes; quando o nome do serviço do app aparecer no título do evento, o app também associa o valor cadastrado para permitir o lançamento financeiro após a confirmação do pagamento. A sincronização automática roda a cada 15 minutos em produção; também roda ao abrir a seção **Agenda** e pode ser iniciada em Configurações. As alterações são importadas incrementalmente para evitar releitura desnecessária da agenda. Os eventos aparecem como pendentes e o pagamento continua sendo confirmado manualmente no app.
 
 ### Configuração necessária no Google Cloud e na hospedagem
 
 1. No Google Cloud Console, habilite a **Google Calendar API** e crie um OAuth Client ID do tipo **Web application**.
 2. Em **Authorized redirect URIs**, adicione o endereço do app terminado em `/api/admin/google-calendar/callback` (por exemplo, `https://clicia-macena-agendamentos.vercel.app/api/admin/google-calendar/callback`). Para uma prévia, adicione também o callback do domínio daquela prévia.
-3. Adicione estas variáveis ao ambiente Vercel do app: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_TOKEN_ENCRYPTION_KEY`. Gere a última com `openssl rand -base64 32`. `GOOGLE_REDIRECT_URI` é opcional; se ficar vazio, o app usa o domínio que iniciou a conexão.
+3. Adicione estas variáveis ao ambiente Vercel de produção: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_TOKEN_ENCRYPTION_KEY` e `CRON_SECRET`. Gere a chave de criptografia com `openssl rand -base64 32` e gere um valor aleatório forte separado para `CRON_SECRET`. `GOOGLE_REDIRECT_URI` é opcional; se ficar vazio, o app usa o domínio que iniciou a conexão. Após configurar, faça novo deploy de produção.
 4. O escopo solicitado é somente leitura da agenda. Em modo de teste do consentimento OAuth, inclua a conta Clicia como usuária de teste.
 
-Nunca coloque o segredo OAuth ou a chave de criptografia no código ou no GitHub.
+Nunca coloque o segredo OAuth, a chave de criptografia ou `CRON_SECRET` no código ou no GitHub. A tarefa automática do Vercel roda somente em produção e requer que `CRON_SECRET` esteja configurado.
